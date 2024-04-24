@@ -111,7 +111,7 @@ class AffinityConfig(BaseModel):
     )
     pose_dims: int = Field(1, description="Pose dimensions")
 
-    rescale: float = Field(None, description="Rescale data")
+    rescale: int | None = Field(None, description="Rescale data")
     restart: bool = Field(False, description="Restart training")
     shift_min: bool = Field(
         False, description="Scale data with min-max transformation"
@@ -292,9 +292,9 @@ def load_config_params(
                     + key
                     + " in config file or command line arguments. Default values will be used."
                 )
-        # turning all path into absolute paths
+        # turning all path into absolute paths and strings for output saving
         if type(val) == pathlib.PosixPath:
-            setattr(data, key, val.absolute())
+            setattr(data, key, str(val.absolute()))
     # return data as dictionary
     return data.model_dump()
 
