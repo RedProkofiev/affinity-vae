@@ -1,5 +1,6 @@
 import logging
 import os
+import pathlib
 
 import yaml
 from pydantic import (
@@ -291,7 +292,9 @@ def load_config_params(
                     + key
                     + " in config file or command line arguments. Default values will be used."
                 )
-
+        # turning all path into absolute paths
+        if type(val) == pathlib.PosixPath:
+            setattr(data, key, val.absolute())
     # return data as dictionary
     return data.model_dump()
 
