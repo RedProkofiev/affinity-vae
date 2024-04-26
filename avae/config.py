@@ -299,7 +299,7 @@ def load_config_params(
     return data.model_dump()
 
 
-def write_config_file(time_stamp_name, data):
+def write_config_file(time_stamp_name, data) -> None:
     # record final configuration in logger and save to yaml file
     for key, val in data.items():
         logging.info("Parameter " + key + " set to value: " + str(data[key]))
@@ -313,31 +313,62 @@ def write_config_file(time_stamp_name, data):
     logging.info("YAML File saved!\n")
 
 
-def setup_visualisation_config(data: dict) -> None:
-    settings.VIS_LOS = (
+def setup_visualisation_config(data: dict) -> dict:
+    """
+    Set up visualisation configurations. Logic is the following: if a specific visualisation is not set, it will be set to the value of vis_all.
+    For frequency, if it is set to 0 (the default), it will be set to the value of freq_all.
+
+    Parameters
+    ----------
+    data : dict
+        Dictionary of configuration parameters.
+
+    Returns
+    -------
+    data : dict
+        Dictionary of configuration parameters updated with logic.
+    """
+    data["vis_los"] = (
         data["vis_los"] if data["vis_los"] is not None else data["vis_all"]
     )
-    settings.VIS_ACC = (
+    settings.VIS_LOS = data["vis_los"]
+
+    data["vis_acc"] = (
         data["vis_acc"] if data["vis_acc"] is not None else data["vis_all"]
     )
-    settings.VIS_REC = (
+
+    settings.VIS_ACC = data["vis_acc"]
+
+    data["vis_rec"] = (
         data["vis_rec"] if data["vis_rec"] is not None else data["vis_all"]
     )
-    settings.VIS_CYC = (
+    settings.VIS_REC = data["vis_rec"]
+
+    data["vis_cyc"] = (
         data["vis_cyc"] if data["vis_cyc"] is not None else data["vis_all"]
     )
-    settings.VIS_AFF = (
+    settings.VIS_CYC = data["vis_cyc"]
+
+    data["vis_aff"] = (
         data["vis_aff"] if data["vis_aff"] is not None else data["vis_all"]
     )
-    settings.VIS_EMB = (
+    settings.VIS_AFF = data['vis_aff']
+
+    data["vis_emb"] = (
         data["vis_emb"] if data["vis_emb"] is not None else data["vis_all"]
     )
-    settings.VIS_INT = (
+    settings.VIS_EMB = data["vis_emb"]
+
+    data["vis_int"] = (
         data["vis_int"] if data["vis_int"] is not None else data["vis_all"]
     )
-    settings.VIS_DIS = (
+    settings.VIS_INT = data["vis_int"]
+
+    data["vis_dis"] = (
         data["vis_dis"] if data["vis_dis"] is not None else data["vis_all"]
     )
+    settings.VIS_DIS = data["vis_dis"]
+
     settings.VIS_POS = (
         data["vis_pos"] if data["vis_pos"] is not None else data["vis_all"]
     )
@@ -354,30 +385,49 @@ def setup_visualisation_config(data: dict) -> None:
     settings.VIS_FORMAT = data["vis_format"]
     settings.VIS_Z_N_INT = data["vis_z_n_int"]
 
-    settings.FREQ_EVAL = (
+    data["freq_eval"] = (
         data["freq_eval"] if data["freq_eval"] != 0 else data["freq_all"]
     )
-    settings.FREQ_REC = (
+    settings.FREQ_EVAL = data["freq_eval"]
+
+    data["freq_rec"] = (
         data["freq_rec"] if data["freq_rec"] != 0 else data["freq_all"]
     )
-    settings.FREQ_EMB = (
+    settings.FREQ_REC = data["freq_rec"]
+
+    data["freq_emb"] = (
         data["freq_emb"] if data["freq_emb"] != 0 else data["freq_all"]
     )
-    settings.FREQ_INT = (
+    settings.FREQ_EMB = data["freq_emb"]
+
+    data["freq_int"] = (
         data["freq_int"] if data["freq_int"] != 0 else data["freq_all"]
     )
-    settings.FREQ_DIS = (
+    settings.FREQ_INT = data["freq_int"]
+
+    data["freq_dis"] = (
         data["freq_dis"] if data["freq_dis"] != 0 else data["freq_all"]
     )
-    settings.FREQ_POS = (
+    settings.FREQ_DIS = data["freq_dis"]
+
+    data["freq_pos"] = (
         data["freq_pos"] if data["freq_pos"] != 0 else data["freq_all"]
     )
-    settings.FREQ_ACC = (
+    settings.FREQ_POS = data["freq_pos"]
+
+    data["freq_acc"] = (
         data["freq_acc"] if data["freq_acc"] != 0 else data["freq_all"]
     )
-    settings.FREQ_STA = (
+    settings.FREQ_ACC = data["freq_acc"]
+
+    data['freq_sta'] = (
         data["freq_sta"] if data["freq_sta"] != 0 else data["freq_all"]
     )
-    settings.FREQ_SIM = (
+    settings.FREQ_STA = data["freq_sta"]
+
+    data["freq_sim"] = (
         data["freq_sim"] if data["freq_sim"] != 0 else data["freq_all"]
     )
+    settings.FREQ_SIM = data["freq_sim"]
+
+    return data
