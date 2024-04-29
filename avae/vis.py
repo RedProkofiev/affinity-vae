@@ -1478,7 +1478,9 @@ def latent_disentamglement_plot(
                         current_lat_grid, current_pos_grid
                     )
                 else:
-                    current_recon, x_before_conv = vae.decoder(current_lat_grid, None)
+                    current_recon, x_before_conv = vae.decoder(
+                        current_lat_grid, None
+                    )
 
             recon_images.append(current_recon.cpu().squeeze().numpy())
 
@@ -2075,11 +2077,13 @@ def latent_space_similarity_plot(
         plt.show()
 
 
-
-def plot_array_distribution_tool(data, array_name, display: bool = False,
+def plot_array_distribution_tool(
+    data,
+    array_name,
+    display: bool = False,
 ):
     """
-    This is a tool for developers 
+    This is a tool for developers
     Plot histogram, boxplot, and violin plot of the data on a single figure.
 
     Parameters:
@@ -2091,7 +2095,7 @@ def plot_array_distribution_tool(data, array_name, display: bool = False,
     if isinstance(data, torch.Tensor):
         # If data is a torch tensor, detach and move it to CPU
         data = data.detach().cpu().numpy()
-        
+
     elif not isinstance(data, np.ndarray):
         # If data is not a numpy array or a torch tensor, convert it to numpy array
         data = np.array(data)
@@ -2120,9 +2124,7 @@ def plot_array_distribution_tool(data, array_name, display: bool = False,
     if not display:
         if not os.path.exists("plots"):
             os.mkdir("plots")
-        plt.savefig(
-            f"plots/array_{array_name}_stats.{settings.VIS_FORMAT}"
-        )
+        plt.savefig(f"plots/array_{array_name}_stats.{settings.VIS_FORMAT}")
         plt.close()
     else:
         plt.show()

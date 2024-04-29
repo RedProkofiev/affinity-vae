@@ -1,6 +1,7 @@
 import logging
 import typing
 
+import lightning
 import numpy as np
 import pandas as pd
 import torch
@@ -53,7 +54,7 @@ def dims_after_pooling(start: int, n_pools: int) -> int:
 
 
 def pass_batch(
-    device: torch.device,
+    fabric: lightning.Fabric,
     vae: torch.nn.Module,
     batch: list,
     b: int,
@@ -65,6 +66,7 @@ def pass_batch(
     optimizer: typing.Any = None,
     beta: list[float] | None = None,
 ) -> tuple[
+    torch.Tensor,
     torch.Tensor,
     torch.Tensor,
     torch.Tensor,
@@ -134,13 +136,13 @@ def pass_batch(
 
     # to device
     x = batch[0]
-    x = x.to(device)
+    x = x.to(fabric.device)
     aff = batch[2]
-    aff = aff.to(device)
+    aff = aff.to(fabric.device)
 
     # forward
     x = x.to(torch.float32)
-    x_hat, x_before_conv,lat_mu, lat_logvar, lat, lat_pose = vae(x)
+    x_hat, x_before_conv, lat_mu, lat_logvar, lat, lat_pose = vae(x)
     if loss is not None:
         history_loss = loss(x, x_hat, lat_mu, lat_logvar, e, batch_aff=aff)
 
@@ -160,7 +162,7 @@ def pass_batch(
 
     # backwards
     if optimizer is not None:
-        history_loss[0].backward()
+        fabric.backward(history_loss[0])
         optimizer.step()
         optimizer.zero_grad()
 
@@ -205,6 +207,11 @@ def add_meta(
         Dataframe containing meta data.
 
     """
+    batch_meta = {
+        k: v.to(device='cpu', non_blocking=True) if hasattr(v, 'to') else v
+        for k, v in batch_meta.items()
+    }
+
     meta = pd.DataFrame(batch_meta)
 
     meta["mode"] = mode
@@ -221,3 +228,45 @@ def add_meta(
         [meta_df, meta], ignore_index=False
     )  # ignore index doesn't overwrite
     return meta_df
+
+
+def configure_optimiser(
+    opt_method: str, model: torch.nn.Module, learning_rate: float
+):
+    """
+    Configure the optimiser for the training.
+
+    Parameters
+    ----------
+    opt_method : str
+        Optimisation method.
+    model : torch.nn.Module
+        Model to be trained.
+    learning_rate : float
+        Learning rate for the optimiser.
+
+    Returns
+    -------
+    optimizer : torch.optim
+        Optimiser for the training.
+    """
+    if opt_method == "adam":
+        optimizer = torch.optim.Adam(
+            params=model.parameters(), lr=learning_rate  # , weight_decay=1e-5
+        )
+    elif opt_method == "sgd":
+        optimizer = torch.optim.SGD(
+            params=model.parameters(), lr=learning_rate  # , weight_decay=1e-5
+        )
+    elif opt_method == "asgd":
+        optimizer = torch.optim.aSGD(
+            params=model.parameters(), lr=learning_rate  # , weight_decay=1e-5
+        )
+    else:
+        raise ValueError(
+            "Invalid optimisation method",
+            opt_method,
+            "must be adam or sgd if you have other methods in mind, this can be easily added to the train.py",
+        )
+
+    return optimizer

@@ -1,14 +1,13 @@
-from typing import Optional, Tuple
-import typing
 import logging
-import torchvision
+import typing
+from typing import Optional, Tuple
+
 import numpy as np
+import torch
+import torchvision
 from scipy import stats
 
-import torch
-from avae.utils import save_imshow_png
 from avae import settings, vis
-
 from avae.decoders.base import AbstractDecoder
 from avae.decoders.spatial import (
     CartesianAxes,
@@ -16,6 +15,8 @@ from avae.decoders.spatial import (
     axis_angle_to_quaternion,
     quaternion_to_rotation_matrix,
 )
+from avae.utils import save_imshow_png
+
 
 class STEFunction(torch.autograd.Function):
     @staticmethod
@@ -26,7 +27,7 @@ class STEFunction(torch.autograd.Function):
     def backward(ctx, grad_output):
         return torch.nn.functional.hardtanh(grad_output)
 
-        
+
 class StraightThroughEstimator(torch.nn.Module):
     def __init__(self):
         super(StraightThroughEstimator, self).__init__()
@@ -211,14 +212,13 @@ class GaussianSplatDecoder(AbstractDecoder):
             torch.nn.Tanh(),
         )
 
-
         # weights are effectively whether a splat is used or not
         # use a soft step function to make this `binary` (but differentiable)
         # NOTE(arl): not sure if this really makes any difference
         self.weights = torch.nn.Sequential(
             torch.nn.Linear(latent_dims, n_splats),
             StraightThroughEstimator(),
-            #SoftStep(k=10.0),
+            # SoftStep(k=10.0),
         )
         # sigma ends up being scaled by `splat_sigma_range`
         self.sigmas = torch.nn.Sequential(
@@ -254,10 +254,6 @@ class GaussianSplatDecoder(AbstractDecoder):
             )
             self._decoder = torch.nn.Sequential(
                 conv(1, 1, 9, padding="same"),
-                #torch.nn.ReLU(),
-                #conv(32, 32, 3, padding="same"),
-                #torch.nn.ReLU(),
-                #conv(32, output_channels, 3, padding="same"),
             )
 
     def configure_renderer(
