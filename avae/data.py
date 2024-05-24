@@ -33,7 +33,7 @@ def load_data(
     gaussian_blur: bool = False,
     normalise: bool = False,
     shift_min: bool = False,
-    rescale: bool | None = None,
+    rescale: int | None = None,
 ) -> tuple[DataLoader, int]:
     ...
 
@@ -53,7 +53,7 @@ def load_data(
     gaussian_blur: bool = False,
     normalise: bool = False,
     shift_min: bool = False,
-    rescale: bool | None = None,
+    rescale: int | None = None,
 ) -> tuple[DataLoader, DataLoader, DataLoader, pd.DataFrame, int]:
     ...
 
@@ -72,7 +72,7 @@ def load_data(
     gaussian_blur: bool = False,
     normalise: bool = False,
     shift_min: bool = False,
-    rescale: bool | None = None,
+    rescale: int | None = None,
 ) -> tuple[DataLoader, DataLoader, DataLoader, pd.DataFrame, int] | tuple[
     DataLoader, int
 ]:
@@ -106,7 +106,7 @@ def load_data(
         In True, the input data is normalised before being passed to the model.
     shift_min: bool
         If True, the minimum value of the input data is shifted to 0 and maximum to 1.
-    rescale: int
+    rescale: int | None
         If not None, the input data is rescaled to the given value.
 
 

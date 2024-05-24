@@ -58,7 +58,7 @@ def train(
     gaussian_blur: bool,
     normalise: bool,
     shift_min: bool,
-    rescale: bool,
+    rescale: int | None,
     tensorboard: bool,
     classifier: str,
     strategy: str,
@@ -160,8 +160,8 @@ def train(
         Path to the beta values to load.
     gamma_load: str
         Path to the gamma values to load.
-    rescale: bool
-        If True, the input data is rescaled to have a mean of 0 and std of 1.
+    rescale: int | None
+        If provided, the data is rescaled by the value.
     """
     lt.pytorch.seed_everything(42)
 
