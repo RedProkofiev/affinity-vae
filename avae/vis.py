@@ -1885,7 +1885,7 @@ def plot_affinity_matrix(
 
     # Plot the data on the left grid
     ax = plt.subplot(gs[0])
-    ax.set_title("Affinity Matrix", fontsize=1)
+    ax.set_title("Affinity Matrix", fontsize=16)
 
     im = ax.imshow(
         lookup, vmin=-1, vmax=1, cmap=matplotlib.colormaps.get_cmap("RdBu")
