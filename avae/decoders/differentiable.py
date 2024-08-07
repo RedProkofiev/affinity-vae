@@ -279,6 +279,7 @@ class GaussianSplatDecoder(AbstractDecoder):
             device=device,
         )
         self._splat_sigma_range = splat_sigma_range
+        self._device = device
 
     def decode_splats(
         self, z: torch.Tensor, pose: torch.Tensor
@@ -295,10 +296,13 @@ class GaussianSplatDecoder(AbstractDecoder):
         # in the case where the encoded pose only has one dimension, we need to
         # use the pose as a rotation about the z-axis
         if pose.shape[-1] == 1:
+            tile = torch.tile(self._default_axis, (batch_size, 1)).to(
+                self._device
+            )
             pose = torch.concat(
                 [
                     pose,
-                    torch.tile(self._default_axis, (batch_size, 1)),
+                    tile,
                 ],
                 axis=-1,
             )

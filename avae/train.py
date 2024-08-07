@@ -321,7 +321,12 @@ def train(
             x = x.to(torch.float32)
 
             # forward
-            x_hat, x_before_conv, lat_mu, lat_logvar, lat, lat_pose = vae(x)
+            if vae.decoder.__class__.__name__ == "GaussianSplatDecoder":
+                x_hat, x_before_conv, lat_mu, lat_logvar, lat, lat_pose = vae(
+                    x
+                )
+            else:
+                x_hat, lat_mu, lat_logvar, lat, lat_pose = vae(x)
             history_loss = loss(
                 x, x_hat, lat_mu, lat_logvar, epoch, batch_aff=aff
             )
@@ -387,7 +392,10 @@ def train(
             v = v.to(torch.float32)
 
             # forward
-            v_hat, v_mu, v_logvar, vlat, vlat_pos = vae(v)
+            if vae.decoder.__class__.__name__ == "GaussianSplatDecoder":
+                v_hat, v_before_conv, v_mu, v_logvar, vlat, vlat_pos = vae(v)
+            else:
+                v_hat, v_mu, v_logvar, vlat, vlat_pos = vae(v)
             v_history_loss = loss(
                 v, v_hat, v_mu, v_logvar, epoch, batch_aff=aff
             )
@@ -454,7 +462,17 @@ def train(
                 t = t.to(torch.float32)
 
                 # forward
-                t_hat, t_mu, t_logvar, tlat, tlat_pose = vae(t)
+                if vae.decoder.__class__.__name__ == "GaussianSplatDecoder":
+                    (
+                        t_hat,
+                        t_before_conv,
+                        t_mu,
+                        t_logvar,
+                        tlat,
+                        tlat_pose,
+                    ) = vae(t)
+                else:
+                    t_hat, t_mu, t_logvar, tlat, tlat_pose = vae(t)
 
                 x_test.extend(t_mu.cpu().detach().numpy())  # store latents
                 c_test.extend(t_logvar.cpu().detach().numpy())
