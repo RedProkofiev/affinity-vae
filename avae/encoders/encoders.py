@@ -138,9 +138,10 @@ class Encoder(AbstractEncoder):
 
     def forward(
         self, x: torch.Tensor
-    ) -> tuple[torch.Tensor, torch.Tensor] | tuple[
-        torch.Tensor, torch.Tensor, torch.Tensor
-    ]:
+    ) -> (
+        tuple[torch.Tensor, torch.Tensor]
+        | tuple[torch.Tensor, torch.Tensor, torch.Tensor]
+    ):
         """Encoder forward pass.
 
         Parameters
@@ -327,9 +328,10 @@ class EncoderB(AbstractEncoder):
 
     def forward(
         self, x: torch.Tensor
-    ) -> tuple[torch.Tensor, torch.Tensor] | tuple[
-        torch.Tensor, torch.Tensor, torch.Tensor
-    ]:
+    ) -> (
+        tuple[torch.Tensor, torch.Tensor]
+        | tuple[torch.Tensor, torch.Tensor, torch.Tensor]
+    ):
         """Encoder forward pass.
 
         Parameters
