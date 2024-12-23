@@ -7,10 +7,10 @@ pandas
 pillow
 pyyaml
 requests
-scikit - image
-scikit - learn
+scikit-image
+scikit-learn
 scipy
 tensorboard
 torch
 torchvision
-umap - learn
+umap-learn
