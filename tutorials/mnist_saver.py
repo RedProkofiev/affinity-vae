@@ -1,7 +1,6 @@
 import gzip
 import os
 import random
-import sys
 
 import _pickle as cPickle
 import matplotlib.pyplot as plt
@@ -13,12 +12,8 @@ from scipy.ndimage import rotate
 
 def load_mnist(path):
 
-    f = gzip.open(path, 'rb')
-    if sys.version_info < (3,):
-        data = cPickle.load(f)
-    else:
+    with gzip.open(path, 'rb') as f:
         data = cPickle.load(f, encoding='bytes')
-    f.close()
     return data
 
 
@@ -84,7 +79,7 @@ class SaverMNIST:
         image_test_path,
         csv_train_path,
         csv_test_path,
-        image_shape=(32, 32),
+        image_shape=(28, 28),
         rotation_angle=180,
         data=None,
     ):
@@ -113,9 +108,9 @@ class SaverMNIST:
                 zip(collection[0], collection[1])
             ):
                 im = Image.fromarray(image)
-                width, height = im.size
                 image_name = str(label) + '_' + str(index) + self._image_format
                 image = np.array(image)
+                image = np.reshape(image, self.image_shape)
 
                 angle = np.random.randint(
                     -self.rotation_angle,
@@ -123,10 +118,14 @@ class SaverMNIST:
                     size=(len(image.shape),),
                 )
                 for ax in range(angle.size):
-                    theta = angle[ax]
+                    theta = float(angle[ax])
                     axes = (ax, (ax + 1) % angle.size)
                     image = rotate(
-                        image, theta, axes=axes, order=0, reshape=False
+                        input=image,
+                        angle=theta,
+                        axes=axes,
+                        order=0,
+                        reshape=False,
                     )
 
                 image = padding(
@@ -141,8 +140,10 @@ class SaverMNIST:
                 labels_list.append(label)
                 paths_list.append(save_path)
 
+            labels_list = np.array(labels_list, dtype=np.int64)
+            paths_list = np.array(paths_list, dtype=str)
             df = pd.DataFrame(
-                {'image_paths': paths_list, 'labels': labels_list}
+                data={'image_paths': paths_list, 'labels': labels_list}
             )
 
             df.to_csv(store_csv_path)

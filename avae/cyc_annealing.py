@@ -80,7 +80,6 @@ def configure_annealing(
 
 
 class cyc_annealing:
-
     """
     This class presents an array which will have a value changing between a minimum
     and maximum for a defined number of cycles. This is used for gamma and beta in loss term.

@@ -264,7 +264,6 @@ def pose_interpolation(
     vae: torch.nn.Module,
     device: torch.device,
 ) -> npt.NDArray:
-
     """This function:
     1-  interpolates within each pose channels
         for the number_of_samples requested.

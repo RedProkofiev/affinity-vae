@@ -140,3 +140,7 @@ affinity-vae.code-workspace
 .vscode/launch.json
 .vscode/settings.json
 .gitignore
+
+# project specific additions
+tutorials/mnist_data/images_train
+tutorials/mnist_data/images_test

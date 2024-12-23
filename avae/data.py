@@ -34,8 +34,7 @@ def load_data(
     normalise: bool = False,
     shift_min: bool = False,
     rescale: int | None = None,
-) -> tuple[DataLoader, int]:
-    ...
+) -> tuple[DataLoader, int]: ...
 
 
 @overload
@@ -54,8 +53,7 @@ def load_data(
     normalise: bool = False,
     shift_min: bool = False,
     rescale: int | None = None,
-) -> tuple[DataLoader, DataLoader, DataLoader, pd.DataFrame, int]:
-    ...
+) -> tuple[DataLoader, DataLoader, DataLoader, pd.DataFrame, int]: ...
 
 
 def load_data(
@@ -73,9 +71,10 @@ def load_data(
     normalise: bool = False,
     shift_min: bool = False,
     rescale: int | None = None,
-) -> tuple[DataLoader, DataLoader, DataLoader, pd.DataFrame, int] | tuple[
-    DataLoader, int
-]:
+) -> (
+    tuple[DataLoader, DataLoader, DataLoader, pd.DataFrame, int]
+    | tuple[DataLoader, int]
+):
     """This function a wrapper around the DiskDataLoader class from the caked library. It loads data from a given path, selects a subset of classes if requested, splits it into train / val and test in batch sets, and loads an affinity matrix.
     The function is overloaded to return different types of data depending on the value of the eval parameter. If eval is True, the function returns only the test data and the dimension of the data. If eval is False, the function returns train, validation, and test data, the affinity matrix, and the dimension of the data.
 
@@ -293,7 +292,6 @@ def get_affinity_matrix(
 
 
 class AffinityDiskDataset(DiskDataset):
-
     """Modified version of the caked DiskDataset to include the affinity matrix and data metadata that is needed for the
     affinity pipeline"""
 

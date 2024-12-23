@@ -514,9 +514,11 @@ def dyn_latentembed_plot(
     bind_checkbox = altair.binding_radio(
         options=opts,
         labels=[
-            str(int(i.split("-")[-1]) + 1)
-            if "off" not in i
-            else i.split("-")[-1]
+            (
+                str(int(i.split("-")[-1]) + 1)
+                if "off" not in i
+                else i.split("-")[-1]
+            )
             for i in opts
         ],
         name="Certainty of prediction per dimension:",
@@ -1525,7 +1527,6 @@ def pose_class_disentanglement_plot(
     display: bool = False,
     vis_format: str = "",
 ):
-
     """Visualise Pose interpolation per class. This function creates a pose interpolatoion
     plot for all classes listed in pose_vis_class.
 
